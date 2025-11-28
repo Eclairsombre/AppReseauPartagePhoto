@@ -3,21 +3,21 @@
 Start:
 
 ```bash
-sudo docker compose up --build
+sudo docker compose up --build -d
 ```
 
 Stop:
 
 ```bash
-sudo docker compose down -v
+sudo docker compose down
 ```
 
 ## Rebuild with new database
 
-In case of a database change, stop (using the command above) and delete the volume using:
+To stop and remove the volume:
 
 ```bash
-sudo docker volume rm appreseaupartagephoto_mariadb_data
+sudo docker compose down
 ```
 
 Then rebuild and rerun. The new database will be initializated following `mariadb-init/init.sql` script.

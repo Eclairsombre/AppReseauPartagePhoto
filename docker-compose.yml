@@ -1,3 +1,4 @@
+name: fotoshare
 services:
   mariadb:
     image: mariadb:latest
@@ -17,6 +18,7 @@ services:
       interval: 10s
       timeout: 10s
       retries: 5
+
   adminer:
     image: adminer
     restart: always

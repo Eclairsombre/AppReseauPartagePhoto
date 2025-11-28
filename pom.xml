@@ -12,11 +12,11 @@
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
     <groupId>local.epul4a</groupId>
-    <artifactId>SpringBootDataJPA</artifactId>
+    <artifactId>FotoShare</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>SpringBootDataJPA</name>
-    <description>SpringBootDataJPA</description>
-    <url/>
+    <name>FotoShare</name>
+    <description>FotoShare</description>
+    <url />
     <licenses>
         <license />
     </licenses>
@@ -103,7 +103,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <mainClass
-                    >local.epul4a.appreseaupartagephoto.AppReseauPartagePhotoApplication</mainClass>
+                    >local.epul4a.fotoshare.FotoshareApplication</mainClass>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>
