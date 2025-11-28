@@ -10,7 +10,7 @@ services:
       - MARIADB_ROOT_PASSWORD=password
       - MARIADB_PASSWORD=password
       - MARIADB_USER=admin
-      - MARIADB_DATABASE=uploads
+      - MARIADB_DATABASE=fotoshareDB
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       start_period: 30s
@@ -32,7 +32,7 @@ services:
     ports:
       - "8081:8080"
     environment:
-      - "SPRING_DATASOURCE_URL=jdbc:mariadb://mariadb:3306/uploads"
+      - "SPRING_DATASOURCE_URL=jdbc:mariadb://mariadb:3306/fotoshareDB"
       - "SPRING_DATASOURCE_USERNAME=admin"
       - "SPRING_DATASOURCE_PASSWORD=password"
     healthcheck:
