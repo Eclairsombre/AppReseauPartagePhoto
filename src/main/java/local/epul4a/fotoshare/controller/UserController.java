@@ -1,7 +1,7 @@
 package local.epul4a.fotoshare.controller;
 
-import local.epul4a.springbootdatajpa.model.User;
-import local.epul4a.springbootdatajpa.service.UserService;
+import local.epul4a.fotoshare.model.User;
+import local.epul4a.fotoshare.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

@@ -15,9 +15,4 @@ public class UserService {
     public User saveUser(User user) {
         return userRepository.save(user);
     }
-    public void createUser(String username, String email) {
-        userRepository.save(User.builder()
-                .email(email)
-                .build());
-    }
 }
