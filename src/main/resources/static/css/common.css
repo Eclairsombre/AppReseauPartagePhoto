@@ -92,6 +92,142 @@ body {
     background: #219a52;
 }
 
+.navbar .nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    z-index: 1001;
+}
+
+.navbar .nav-toggle .hamburger {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background: white;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.navbar .nav-toggle .hamburger::before,
+.navbar .nav-toggle .hamburger::after {
+    content: '';
+    position: absolute;
+    width: 25px;
+    height: 3px;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.navbar .nav-toggle .hamburger::before {
+    top: -8px;
+}
+
+.navbar .nav-toggle .hamburger::after {
+    top: 8px;
+}
+
+.navbar .nav-toggle.active .hamburger {
+    background: transparent;
+}
+
+.navbar .nav-toggle.active .hamburger::before {
+    top: 0;
+    transform: rotate(45deg);
+}
+
+.navbar .nav-toggle.active .hamburger::after {
+    top: 0;
+    transform: rotate(-45deg);
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        flex-wrap: wrap;
+        padding: 1rem;
+    }
+
+    .navbar .nav-toggle {
+        display: block;
+    }
+
+    .navbar .nav-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        padding-top: 1rem;
+        margin-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        gap: 0;
+    }
+
+    .navbar .nav-links.active {
+        display: flex;
+    }
+
+    .navbar .nav-links a {
+        padding: 0.75rem 0;
+        width: 100%;
+        border-radius: 0;
+    }
+
+    .navbar .nav-links a:hover {
+        background: rgba(255, 255, 255, 0.1);
+        padding-left: 0.5rem;
+    }
+
+    .navbar .nav-separator {
+        display: none;
+    }
+
+    .navbar .user-info {
+        padding: 0.75rem 0;
+        width: 100%;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        margin-top: 0.5rem;
+        padding-top: 1rem;
+    }
+
+    .navbar .logout-form {
+        display: block;
+        width: 100%;
+    }
+
+    .navbar .logout-btn {
+        width: 100%;
+        text-align: left;
+        border-radius: 0;
+        padding: 0.75rem 0;
+        background: transparent;
+    }
+
+    .navbar .logout-btn:hover {
+        background: rgba(231, 76, 60, 0.3);
+        padding-left: 0.5rem;
+    }
+
+    .navbar .auth-links {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
+    }
+
+    .navbar .auth-links a {
+        background: transparent !important;
+    }
+
+    .navbar .auth-links a.btn-register {
+        background: #27ae60 !important;
+        margin-top: 0.5rem;
+        text-align: center;
+        border-radius: 4px;
+    }
+}
+
 .container {
     max-width: 1200px;
     margin: 2rem auto;
