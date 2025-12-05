@@ -21,6 +21,7 @@ public class Share {
     private Long id;
     private Long photo_id;
     private Long user_id;
+    @Builder.Default
     private PERMISSION permission = PERMISSION.READ;
     private Date created_at;
 

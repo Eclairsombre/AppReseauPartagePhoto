@@ -1,26 +1,28 @@
 <!DOCTYPE html>
-<html lang="fr " xmlns:th="http://www.thymeleaf.org">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <title>Users List</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FotoShare - Bienvenue</title>
+    <th:block th:replace="~{fragments/header :: auth-styles}"></th:block>
 </head>
 <body>
-<h1>Users</h1>
-<table>
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Username</th>
-        <th>Email</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="user : ${users}">
-        <td th:text="${user.id}"></td>
-        <td th:text="${user.username}"></td>
-        <td th:text="${user.email}"></td>
-    </tr>
-    </tbody>
-</table>
-<a href="/addUser">Add New User</a>
+    <th:block th:replace="~{fragments/header :: header}"></th:block>
+
+    <div class="hero">
+        <div class="hero-content">
+            <h1>📷 FotoShare</h1>
+            <p>Bienvenue sur FotoShare - Partagez vos photos en toute sécurité</p>
+            <div class="btn-group" sec:authorize="!isAuthenticated()">
+                <a th:href="@{/login}" class="btn-hero btn-hero-primary">Se connecter</a>
+                <a th:href="@{/register}" class="btn-hero btn-hero-secondary">S'inscrire</a>
+            </div>
+            <div class="btn-group" sec:authorize="isAuthenticated()">
+                <a th:href="@{/photos}" class="btn-hero btn-hero-primary">Voir les photos</a>
+                <a th:href="@{/photos/upload}" class="btn-hero btn-hero-secondary">Uploader une photo</a>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

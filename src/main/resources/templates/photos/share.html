@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partager - FotoShare</title>
+    <th:block th:replace="~{fragments/header :: photos-styles}"></th:block>
+</head>
+<body>
+    <th:block th:replace="~{fragments/header :: header}"></th:block>
+
+    <div class="container medium">
+        <h1>🔗 Partager la photo</h1>
+
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+        <!-- Photo info -->
+        <div class="card">
+            <div class="photo-header">
+                <img class="photo-thumb" th:src="@{/photos/{id}/file(id=${photo.id})}" th:alt="${photo.title}">
+                <div class="photo-info">
+                    <h3 th:text="${photo.title}"></h3>
+                    <p th:text="${photo.original_filename}"></p>
+                </div>
+            </div>
+
+            <!-- Share form -->
+            <h2>Ajouter un partage</h2>
+            <form th:action="@{/photos/{id}/share(id=${photo.id})}" method="post">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="username">Nom d'utilisateur</label>
+                        <input type="text" id="username" name="username" required placeholder="Entrez le nom d'utilisateur">
+                    </div>
+                    <div class="form-group">
+                        <label for="permission">Permission</label>
+                        <select id="permission" name="permission">
+                            <option th:each="p : ${permissions}" th:value="${p}" th:text="${p}"></option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Partager</button>
+                </div>
+            </form>
+            <p class="help-text">
+                <strong>READ</strong> : Peut voir la photo.<br>
+                <strong>COMMENT</strong> : Peut voir et commenter la photo.<br>
+                <strong>ADMIN</strong> : Peut voir, commenter, modifier et partager la photo.
+            </p>
+        </div>
+
+        <!-- Existing shares -->
+        <div class="card">
+            <h2>Partages existants</h2>
+
+            <div th:if="${#lists.isEmpty(shares)}" class="empty-state">
+                <p>Cette photo n'est partagée avec personne.</p>
+            </div>
+
+            <table th:unless="${#lists.isEmpty(shares)}">
+                <thead>
+                    <tr>
+                        <th>Utilisateur</th>
+                        <th>Permission</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="share : ${shares}">
+                        <td th:text="${share.username}"></td>
+                        <td>
+                            <span class="badge" th:classappend="${share.permission}" th:text="${share.permission}"></span>
+                        </td>
+                        <td th:text="${#dates.format(share.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td>
+                            <form th:action="@{/photos/{photoId}/share/{userId}/revoke(photoId=${photo.id}, userId=${share.userId})}"
+                                  method="post" style="display: inline;"
+                                  onsubmit="return confirm('Révoquer ce partage ?');">
+                                <button type="submit" class="btn btn-danger btn-sm">Révoquer</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <a th:href="@{/photos/{id}(id=${photo.id})}" class="btn btn-secondary">⬅️ Retour à la photo</a>
+    </div>
+</body>
+</html>
+

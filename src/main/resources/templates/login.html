@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - FotoShare</title>
+    <th:block th:replace="~{fragments/header :: auth-styles}"></th:block>
+</head>
+<body>
+    <th:block th:replace="~{fragments/header :: header-simple}"></th:block>
+
+    <div class="page-content">
+        <div class="auth-container">
+            <h1>🔐 Connexion</h1>
+
+            <div th:if="${successMessage}" class="success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="error-message" th:text="${errorMessage}"></div>
+
+            <form th:action="@{/login}" method="post">
+                <div class="form-group">
+                    <label for="username">Nom d'utilisateur</label>
+                    <input type="text" id="username" name="username" required autofocus>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+
+                <button type="submit">Se connecter</button>
+            </form>
+
+            <div class="auth-link">
+                Pas encore de compte? <a th:href="@{/register}">S'inscrire</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

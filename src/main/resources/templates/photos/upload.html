@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload - FotoShare</title>
+    <th:block th:replace="~{fragments/header :: photos-styles}"></th:block>
+</head>
+<body>
+    <th:block th:replace="~{fragments/header :: header}"></th:block>
+
+    <div class="container">
+        <h1>📤 Uploader une photo</h1>
+
+        <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+        <div class="card">
+            <form th:action="@{/photos/upload}" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label>Photo *</label>
+                    <div class="file-input" onclick="document.getElementById('file').click()">
+                        <input type="file" id="file" name="file" accept="image/jpeg,image/png,image/gif,image/webp,image/bmp" required onchange="previewImage(this)">
+                        <div class="label">
+                            <p>📁 Cliquez pour sélectionner une image</p>
+                            <p>ou glissez-déposez ici</p>
+                        </div>
+                        <img class="preview" id="preview" alt="Aperçu">
+                    </div>
+                    <p class="help-text" th:text="'Formats acceptés: JPEG, PNG, GIF, WebP, BMP. Taille max: ' + ${maxFileSize} + ' MB'"></p>
+                </div>
+
+                <div class="form-group">
+                    <label for="title">Titre</label>
+                    <input type="text" id="title" name="title" maxlength="255" placeholder="Titre de la photo">
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" maxlength="2000" placeholder="Description de la photo"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="visibility">Visibilité</label>
+                    <select id="visibility" name="visibility">
+                        <option th:each="v : ${visibilities}" th:value="${v}" th:text="${v}" th:selected="${v.name() == 'PRIVATE'}"></option>
+                    </select>
+                    <p class="help-text">
+                        <strong>PUBLIC</strong> : Visible par tous.<br>
+                        <strong>PRIVATE</strong> : Visible uniquement par vous et les personnes avec qui vous partagez.
+                    </p>
+                </div>
+
+                <div class="buttons">
+                    <button type="submit" class="btn btn-primary">📤 Uploader</button>
+                    <a th:href="@{/photos}" class="btn btn-secondary">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function previewImage(input) {
+            const preview = document.getElementById('preview');
+            const label = input.parentElement.querySelector('.label');
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    label.style.display = 'none';
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Drag and drop support
+        const fileInput = document.querySelector('.file-input');
+        fileInput.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileInput.style.borderColor = '#3498db';
+            fileInput.style.background = '#f0f8ff';
+        });
+        fileInput.addEventListener('dragleave', () => {
+            fileInput.style.borderColor = '#ddd';
+            fileInput.style.background = 'transparent';
+        });
+        fileInput.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileInput.style.borderColor = '#ddd';
+            fileInput.style.background = 'transparent';
+            const file = document.getElementById('file');
+            file.files = e.dataTransfer.files;
+            previewImage(file);
+        });
+    </script>
+</body>
+</html>
+

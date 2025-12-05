@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${album.name} + ' - FotoShare'">Album - FotoShare</title>
+    <th:block th:replace="~{fragments/header :: albums-styles}"></th:block>
+</head>
+<body>
+    <th:block th:replace="~{fragments/header :: header}"></th:block>
+
+    <div class="container">
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+        <!-- En-tête de l'album -->
+        <div class="album-header">
+            <h1 th:text="'📁 ' + ${album.name}"></h1>
+            <div class="meta">
+                <span th:text="${album.photoCount} + ' photo(s)'"></span>
+                <span th:text="' • Créé le ' + ${#dates.format(album.createdAt, 'dd/MM/yyyy')}"></span>
+            </div>
+            <p class="description" th:if="${album.description != null}" th:text="${album.description}"></p>
+
+            <div class="album-actions" th:if="${isOwner}">
+                <a th:href="@{/albums/{id}/edit(id=${album.id})}" class="btn btn-primary">✏️ Modifier</a>
+                <form th:action="@{/albums/{id}/delete(id=${album.id})}" method="post" style="display: inline;"
+                      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet album ? Les photos ne seront pas supprimées.');">
+                    <button type="submit" class="btn btn-danger">🗑️ Supprimer l'album</button>
+                </form>
+                <a th:href="@{/albums}" class="btn btn-secondary">⬅️ Retour</a>
+            </div>
+        </div>
+
+        <!-- Section : Ajouter une photo -->
+        <div class="section" th:if="${isOwner and !#lists.isEmpty(availablePhotos)}">
+            <h2>➕ Ajouter une photo à l'album</h2>
+            <form th:action="@{/albums/{id}/photos/add(id=${album.id})}" method="post" class="add-photo-form">
+                <select name="photoId" required>
+                    <option value="">Sélectionner une photo...</option>
+                    <option th:each="photo : ${availablePhotos}" th:value="${photo.id}" th:text="${photo.title}"></option>
+                </select>
+                <button type="submit" class="btn btn-success">Ajouter</button>
+            </form>
+        </div>
+
+        <!-- Section : Photos de l'album -->
+        <div class="section">
+            <h2>🖼️ Photos de l'album</h2>
+
+            <div th:if="${#lists.isEmpty(photos)}" class="empty-state">
+                <p>Cet album ne contient pas encore de photos.</p>
+                <a th:href="@{/photos/upload}" class="btn btn-primary" th:if="${isOwner}">Uploader une photo</a>
+            </div>
+
+            <div class="photos-grid" th:unless="${#lists.isEmpty(photos)}">
+                <div th:each="photo : ${photos}" class="photo-item">
+                    <a th:href="@{/photos/{id}(id=${photo.id})}">
+                        <img th:src="@{/photos/{id}/file(id=${photo.id})}" th:alt="${photo.title}">
+                    </a>
+                    <div class="overlay">
+                        <a th:href="@{/photos/{id}(id=${photo.id})}" th:text="${photo.title}">Titre</a>
+                    </div>
+                    <form th:if="${isOwner}" th:action="@{/albums/{albumId}/photos/{photoId}/remove(albumId=${album.id}, photoId=${photo.id})}"
+                          method="post" style="display: inline;"
+                          onsubmit="return confirm('Retirer cette photo de l\'album ?');">
+                        <button type="submit" class="remove-btn" title="Retirer de l'album">✕</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

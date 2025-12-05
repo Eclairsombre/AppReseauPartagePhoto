@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier l'album - FotoShare</title>
+    <th:block th:replace="~{fragments/header :: albums-styles}"></th:block>
+</head>
+<body>
+    <th:block th:replace="~{fragments/header :: header}"></th:block>
+
+    <div class="container">
+        <h1>✏️ Modifier l'album</h1>
+
+        <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+        <div class="card">
+            <form th:action="@{/albums/{id}/edit(id=${album.id})}" method="post">
+                <div class="form-group">
+                    <label for="name">Nom de l'album *</label>
+                    <input type="text" id="name" name="name" required maxlength="100" th:value="${album.name}">
+                    <p class="help-text">Maximum 100 caractères</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" th:text="${album.description}"></textarea>
+                </div>
+
+                <div class="buttons">
+                    <button type="submit" class="btn btn-primary">💾 Enregistrer</button>
+                    <a th:href="@{/albums/{id}(id=${album.id})}" class="btn btn-secondary">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+

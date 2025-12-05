@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Albums - FotoShare</title>
+    <th:block th:replace="~{fragments/header :: albums-styles}"></th:block>
+</head>
+<body>
+    <th:block th:replace="~{fragments/header :: header}"></th:block>
+
+    <div class="container">
+        <h1>📁 Mes Albums</h1>
+
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+        <div class="actions">
+            <a th:href="@{/albums/create}" class="btn btn-primary">➕ Créer un album</a>
+        </div>
+
+        <div th:if="${#lists.isEmpty(albums)}" class="empty-state">
+            <p>Vous n'avez pas encore d'albums.</p>
+            <a th:href="@{/albums/create}" class="btn btn-primary">Créer votre premier album</a>
+        </div>
+
+        <div class="albums-grid" th:unless="${#lists.isEmpty(albums)}">
+            <div th:each="album : ${albums}" class="album-card">
+                <a th:href="@{/albums/{id}(id=${album.id})}" style="text-decoration: none;">
+                    <div class="album-cover">
+                        <img th:if="${album.coverPhotoUrl != null}" th:src="${album.coverPhotoUrl}" alt="Couverture">
+                        <span th:if="${album.coverPhotoUrl == null}" class="placeholder">📁</span>
+                    </div>
+                    <div class="info">
+                        <div class="title" th:text="${album.name}">Nom de l'album</div>
+                        <div class="meta">
+                            <span th:text="${album.photoCount} + ' photo(s)'"></span>
+                            <span th:text="' • ' + ${#dates.format(album.createdAt, 'dd/MM/yyyy')}"></span>
+                        </div>
+                        <div class="description" th:if="${album.description != null}" th:text="${album.description}"></div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

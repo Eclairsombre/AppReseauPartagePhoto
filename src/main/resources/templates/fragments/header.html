@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<!-- Fragment pour les liens CSS communs -->
+<th:block th:fragment="header-styles">
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+</th:block>
+
+<!-- Fragment pour les styles photos -->
+<th:block th:fragment="photos-styles">
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/photos.css}">
+</th:block>
+
+<!-- Fragment pour les styles albums -->
+<th:block th:fragment="albums-styles">
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/albums.css}">
+</th:block>
+
+<!-- Fragment pour les styles auth (login/register) -->
+<th:block th:fragment="auth-styles">
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+</th:block>
+
+<!-- Fragment pour le header/navbar complet -->
+<nav th:fragment="header" class="navbar">
+    <a th:href="@{/}" class="brand">📷 FotoShare</a>
+    <div class="nav-links">
+        <a th:href="@{/photos}">Photos</a>
+        <a th:href="@{/albums}" sec:authorize="isAuthenticated()">Albums</a>
+        <a th:href="@{/photos/my}" sec:authorize="isAuthenticated()">Mes photos</a>
+        <a th:href="@{/photos/upload}" sec:authorize="isAuthenticated()">Upload</a>
+
+        <span class="nav-separator" sec:authorize="isAuthenticated()">|</span>
+
+        <span sec:authorize="isAuthenticated()" class="user-info">
+            <span th:text="${#authentication.name}"></span>
+        </span>
+        <form th:action="@{/logout}" method="post" class="logout-form" sec:authorize="isAuthenticated()">
+            <button type="submit" class="logout-btn">Déconnexion</button>
+        </form>
+
+        <span class="auth-links" sec:authorize="!isAuthenticated()">
+            <a th:href="@{/login}">Connexion</a>
+            <a th:href="@{/register}" class="btn-register">Inscription</a>
+        </span>
+    </div>
+</nav>
+
+<!-- Fragment pour le header simplifié (pages login/register) -->
+<nav th:fragment="header-simple" class="navbar">
+    <a th:href="@{/}" class="brand">📷 FotoShare</a>
+    <div class="nav-links">
+        <a th:href="@{/}">Accueil</a>
+        <a th:href="@{/photos}">Photos</a>
+        <span class="nav-separator">|</span>
+        <span class="auth-links">
+            <a th:href="@{/login}">Connexion</a>
+            <a th:href="@{/register}" class="btn-register">Inscription</a>
+        </span>
+    </div>
+</nav>
+
+</html>
+

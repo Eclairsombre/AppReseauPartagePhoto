@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photos - FotoShare</title>
+    <th:block th:replace="~{fragments/header :: photos-styles}"></th:block>
+</head>
+<body>
+    <th:block th:replace="~{fragments/header :: header}"></th:block>
+
+    <div class="container">
+        <h1 th:text="${isOwnerView != null and isOwnerView} ? 'Mes Photos' : 'Photos'"></h1>
+
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+        <div class="actions" sec:authorize="isAuthenticated()">
+            <a th:href="@{/photos/upload}" class="btn btn-primary">📤 Uploader une photo</a>
+        </div>
+
+        <div th:if="${#lists.isEmpty(photos)}" class="empty-state">
+            <p>Aucune photo disponible.</p>
+            <a th:href="@{/photos/upload}" class="btn btn-primary" sec:authorize="isAuthenticated()">Uploader votre première photo</a>
+        </div>
+
+        <div class="photos-grid" th:unless="${#lists.isEmpty(photos)}">
+            <div th:each="photo : ${photos}" class="photo-card">
+                <a th:href="@{/photos/{id}(id=${photo.id})}">
+                    <img th:src="@{/photos/{id}/file(id=${photo.id})}" th:alt="${photo.title}" loading="lazy">
+                </a>
+                <div class="info">
+                    <div class="title">
+                        <a th:href="@{/photos/{id}(id=${photo.id})}" th:text="${photo.title}"></a>
+                    </div>
+                    <div class="meta">
+                        <span th:text="'Par ' + ${photo.ownerUsername}"></span>
+                        <span th:if="${photo.userPermission != null}"
+                              class="permission-badge"
+                              th:classappend="${photo.userPermission}"
+                              th:text="${photo.userPermission}"></span>
+                    </div>
+                    <span class="visibility" th:classappend="${photo.visibility}" th:text="${photo.visibility}"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

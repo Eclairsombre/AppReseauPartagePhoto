@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${photo.title} + ' - FotoShare'">Photo - FotoShare</title>
+    <th:block th:replace="~{fragments/header :: photos-styles}"></th:block>
+</head>
+<body>
+    <th:block th:replace="~{fragments/header :: header}"></th:block>
+
+    <div class="container">
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+        <div class="photo-container">
+            <img class="photo-image" th:src="@{/photos/{id}/file(id=${photo.id})}" th:alt="${photo.title}">
+
+            <div class="photo-info">
+                <h1 class="photo-title" th:text="${photo.title}"></h1>
+
+                <div class="photo-meta">
+                    <span th:text="'Par ' + ${photo.ownerUsername}"></span>
+                    <span th:text="' • ' + ${#dates.format(photo.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
+                </div>
+
+                <div class="badges">
+                    <span class="badge" th:classappend="${photo.visibility}" th:text="${photo.visibility}"></span>
+                    <span th:if="${photo.userPermission != null}" class="badge" th:classappend="${photo.userPermission}">
+                        Permission: <span th:text="${photo.userPermission}"></span>
+                    </span>
+                </div>
+
+                <p class="photo-description" th:if="${photo.description != null and !photo.description.isEmpty()}"
+                   th:text="${photo.description}"></p>
+
+                <table class="details-table">
+                    <tr>
+                        <th>Fichier original</th>
+                        <td th:text="${photo.originalFilename}"></td>
+                    </tr>
+                    <tr>
+                        <th>Type</th>
+                        <td th:text="${photo.contentType}"></td>
+                    </tr>
+                    <tr>
+                        <th>Taille</th>
+                        <td th:text="${#numbers.formatDecimal(photo.fileSize / 1024.0 / 1024.0, 1, 2)} + ' MB'"></td>
+                    </tr>
+                </table>
+
+                <div class="actions" sec:authorize="isAuthenticated()">
+                    <a th:if="${isOwner or canEdit}" th:href="@{/photos/{id}/edit(id=${photo.id})}" class="btn btn-primary">✏️ Modifier</a>
+                    <a th:if="${isOwner or canEdit}" th:href="@{/photos/{id}/share(id=${photo.id})}" class="btn btn-success">🔗 Partager</a>
+                    <form th:if="${isOwner}" th:action="@{/photos/{id}/delete(id=${photo.id})}" method="post" style="display: inline;"
+                          onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette photo ?');">
+                        <button type="submit" class="btn btn-danger">🗑️ Supprimer</button>
+                    </form>
+                    <a th:href="@{/photos}" class="btn btn-secondary">⬅️ Retour</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Commentaires -->
+        <div class="comments-section">
+            <h2>💬 Commentaires (<span th:text="${commentCount}">0</span>)</h2>
+
+            <!-- Formulaire d'ajout de commentaire -->
+            <div th:if="${canComment}" class="comment-form" sec:authorize="isAuthenticated()">
+                <form th:action="@{/photos/{id}/comments(id=${photo.id})}" method="post">
+                    <textarea name="text" placeholder="Écrire un commentaire..." required maxlength="2000"></textarea>
+                    <button type="submit" class="btn btn-primary">📝 Commenter</button>
+                </form>
+            </div>
+
+            <div th:if="${!canComment}" class="no-comments" sec:authorize="isAuthenticated()">
+                <p>Vous n'avez pas la permission de commenter cette photo.</p>
+            </div>
+
+            <div sec:authorize="!isAuthenticated()" class="no-comments">
+                <p>Connectez-vous pour commenter cette photo.</p>
+                <a th:href="@{/login}" class="btn btn-primary">Se connecter</a>
+            </div>
+
+            <!-- Liste des commentaires -->
+            <ul class="comments-list" th:unless="${#lists.isEmpty(comments)}">
+                <li th:each="comment : ${comments}" class="comment-item">
+                    <div class="comment-header">
+                        <span class="comment-author" th:text="${comment.authorUsername}">Utilisateur</span>
+                        <span class="comment-date" th:text="${#dates.format(comment.createdAt, 'dd/MM/yyyy HH:mm')}">Date</span>
+                    </div>
+                    <p class="comment-text" th:text="${comment.text}">Texte du commentaire</p>
+
+                    <div class="comment-actions" th:if="${comment.canDelete or comment.canEdit}" sec:authorize="isAuthenticated()">
+                        <!-- Bouton Modifier -->
+                        <button th:if="${comment.canEdit}" type="button" class="btn btn-secondary btn-sm"
+                                th:onclick="'toggleEditForm(' + ${comment.id} + ')'">✏️ Modifier</button>
+
+                        <!-- Bouton Supprimer -->
+                        <form th:if="${comment.canDelete}"
+                              th:action="@{/photos/{photoId}/comments/{commentId}/delete(photoId=${photo.id}, commentId=${comment.id})}"
+                              method="post"
+                              onsubmit="return confirm('Supprimer ce commentaire ?');">
+                            <button type="submit" class="btn btn-danger btn-sm">🗑️ Supprimer</button>
+                        </form>
+                    </div>
+
+                    <!-- Formulaire de modification (caché par défaut) -->
+                    <div th:if="${comment.canEdit}" th:id="'edit-form-' + ${comment.id}" class="edit-form" style="display: none;">
+                        <form th:action="@{/photos/{photoId}/comments/{commentId}/edit(photoId=${photo.id}, commentId=${comment.id})}" method="post">
+                            <textarea name="text" th:text="${comment.text}" required maxlength="2000"></textarea>
+                            <button type="submit" class="btn btn-primary btn-sm">💾 Enregistrer</button>
+                            <button type="button" class="btn btn-secondary btn-sm" th:onclick="'toggleEditForm(' + ${comment.id} + ')'">Annuler</button>
+                        </form>
+                    </div>
+                </li>
+            </ul>
+
+            <div th:if="${#lists.isEmpty(comments)}" class="no-comments">
+                <p>Aucun commentaire pour le moment. Soyez le premier à commenter !</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleEditForm(commentId) {
+            var form = document.getElementById('edit-form-' + commentId);
+            if (form.style.display === 'none') {
+                form.style.display = 'block';
+            } else {
+                form.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
+

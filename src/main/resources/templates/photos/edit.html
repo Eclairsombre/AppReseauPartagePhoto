@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier - FotoShare</title>
+    <th:block th:replace="~{fragments/header :: photos-styles}"></th:block>
+</head>
+<body>
+    <th:block th:replace="~{fragments/header :: header}"></th:block>
+
+    <div class="container">
+        <h1>✏️ Modifier la photo</h1>
+
+        <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+        <div class="card">
+            <img class="preview" th:src="@{/photos/{id}/file(id=${photo.id})}" th:alt="${photo.title}">
+
+            <form th:action="@{/photos/{id}/edit(id=${photo.id})}" method="post">
+                <div class="form-group">
+                    <label for="title">Titre</label>
+                    <input type="text" id="title" name="title" maxlength="255" th:value="${photo.title}">
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" maxlength="2000" th:text="${photo.description}"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="visibility">Visibilité</label>
+                    <select id="visibility" name="visibility">
+                        <option th:each="v : ${visibilities}" th:value="${v}" th:text="${v}" th:selected="${v == photo.visibility}"></option>
+                    </select>
+                    <p class="help-text">
+                        <strong>PUBLIC</strong> : Visible par tous.<br>
+                        <strong>PRIVATE</strong> : Visible uniquement par vous et les personnes avec qui vous partagez.
+                    </p>
+                </div>
+
+                <div class="buttons">
+                    <button type="submit" class="btn btn-primary">💾 Enregistrer</button>
+                    <a th:href="@{/photos/{id}(id=${photo.id})}" class="btn btn-secondary">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+
