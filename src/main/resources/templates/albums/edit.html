@@ -11,7 +11,7 @@
     <th:block th:replace="~{fragments/header :: header}"></th:block>
 
     <div class="container">
-        <h1>✏️ Modifier l'album</h1>
+        <h1>Modifier l'album</h1>
 
         <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
 
@@ -29,7 +29,7 @@
                 </div>
 
                 <div class="buttons">
-                    <button type="submit" class="btn btn-primary">💾 Enregistrer</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
                     <a th:href="@{/albums/{id}(id=${album.id})}" class="btn btn-secondary">Annuler</a>
                 </div>
             </form>

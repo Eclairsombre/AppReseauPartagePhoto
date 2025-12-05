@@ -11,13 +11,13 @@
     <th:block th:replace="~{fragments/header :: header}"></th:block>
 
     <div class="container">
-        <h1>📁 Mes Albums</h1>
+        <h1>Mes Albums</h1>
 
         <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
         <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
 
         <div class="actions">
-            <a th:href="@{/albums/create}" class="btn btn-primary">➕ Créer un album</a>
+            <a th:href="@{/albums/create}" class="btn btn-primary">Créer un album</a>
         </div>
 
         <div th:if="${#lists.isEmpty(albums)}" class="empty-state">
@@ -30,7 +30,7 @@
                 <a th:href="@{/albums/{id}(id=${album.id})}" style="text-decoration: none;">
                     <div class="album-cover">
                         <img th:if="${album.coverPhotoUrl != null}" th:src="${album.coverPhotoUrl}" alt="Couverture">
-                        <span th:if="${album.coverPhotoUrl == null}" class="placeholder">📁</span>
+                        <span th:if="${album.coverPhotoUrl == null}" class="placeholder">Album</span>
                     </div>
                     <div class="info">
                         <div class="title" th:text="${album.name}">Nom de l'album</div>

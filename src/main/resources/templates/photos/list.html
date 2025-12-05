@@ -17,7 +17,7 @@
         <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
 
         <div class="actions" sec:authorize="isAuthenticated()">
-            <a th:href="@{/photos/upload}" class="btn btn-primary">📤 Uploader une photo</a>
+            <a th:href="@{/photos/upload}" class="btn btn-primary">Uploader une photo</a>
         </div>
 
         <div th:if="${#lists.isEmpty(photos)}" class="empty-state">

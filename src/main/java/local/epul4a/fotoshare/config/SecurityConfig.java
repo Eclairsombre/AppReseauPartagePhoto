@@ -33,7 +33,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/", "/register", "/login", "/logout", "/css/**", "/js/**", "/images/**").permitAll()
+                .requestMatchers("/", "/register", "/login", "/logout", "/error", "/css/**", "/js/**", "/images/**").permitAll()
                 // Photos publiques accessibles sans authentification
                 .requestMatchers("/photos", "/photos/{id}", "/photos/{id}/file").permitAll()
                 // Actions sur les photos nécessitent une authentification

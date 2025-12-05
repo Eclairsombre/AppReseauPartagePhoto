@@ -51,26 +51,26 @@
                 </table>
 
                 <div class="actions" sec:authorize="isAuthenticated()">
-                    <a th:if="${isOwner or canEdit}" th:href="@{/photos/{id}/edit(id=${photo.id})}" class="btn btn-primary">✏️ Modifier</a>
-                    <a th:if="${isOwner or canEdit}" th:href="@{/photos/{id}/share(id=${photo.id})}" class="btn btn-success">🔗 Partager</a>
+                    <a th:if="${isOwner or canEdit}" th:href="@{/photos/{id}/edit(id=${photo.id})}" class="btn btn-primary">Modifier</a>
+                    <a th:if="${isOwner or canEdit}" th:href="@{/photos/{id}/share(id=${photo.id})}" class="btn btn-success">Partager</a>
                     <form th:if="${isOwner}" th:action="@{/photos/{id}/delete(id=${photo.id})}" method="post" style="display: inline;"
                           onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette photo ?');">
-                        <button type="submit" class="btn btn-danger">🗑️ Supprimer</button>
+                        <button type="submit" class="btn btn-danger">Supprimer</button>
                     </form>
-                    <a th:href="@{/photos}" class="btn btn-secondary">⬅️ Retour</a>
+                    <a th:href="@{/photos}" class="btn btn-secondary">Retour</a>
                 </div>
             </div>
         </div>
 
         <!-- Section Commentaires -->
         <div class="comments-section">
-            <h2>💬 Commentaires (<span th:text="${commentCount}">0</span>)</h2>
+            <h2>Commentaires (<span th:text="${commentCount}">0</span>)</h2>
 
             <!-- Formulaire d'ajout de commentaire -->
             <div th:if="${canComment}" class="comment-form" sec:authorize="isAuthenticated()">
                 <form th:action="@{/photos/{id}/comments(id=${photo.id})}" method="post">
                     <textarea name="text" placeholder="Écrire un commentaire..." required maxlength="2000"></textarea>
-                    <button type="submit" class="btn btn-primary">📝 Commenter</button>
+                    <button type="submit" class="btn btn-primary">Commenter</button>
                 </form>
             </div>
 
@@ -95,14 +95,14 @@
                     <div class="comment-actions" th:if="${comment.canDelete or comment.canEdit}" sec:authorize="isAuthenticated()">
                         <!-- Bouton Modifier -->
                         <button th:if="${comment.canEdit}" type="button" class="btn btn-secondary btn-sm"
-                                th:onclick="'toggleEditForm(' + ${comment.id} + ')'">✏️ Modifier</button>
+                                th:onclick="'toggleEditForm(' + ${comment.id} + ')'">Modifier</button>
 
                         <!-- Bouton Supprimer -->
                         <form th:if="${comment.canDelete}"
                               th:action="@{/photos/{photoId}/comments/{commentId}/delete(photoId=${photo.id}, commentId=${comment.id})}"
                               method="post"
                               onsubmit="return confirm('Supprimer ce commentaire ?');">
-                            <button type="submit" class="btn btn-danger btn-sm">🗑️ Supprimer</button>
+                            <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
                         </form>
                     </div>
 
@@ -110,7 +110,7 @@
                     <div th:if="${comment.canEdit}" th:id="'edit-form-' + ${comment.id}" class="edit-form" style="display: none;">
                         <form th:action="@{/photos/{photoId}/comments/{commentId}/edit(photoId=${photo.id}, commentId=${comment.id})}" method="post">
                             <textarea name="text" th:text="${comment.text}" required maxlength="2000"></textarea>
-                            <button type="submit" class="btn btn-primary btn-sm">💾 Enregistrer</button>
+                            <button type="submit" class="btn btn-primary btn-sm">Enregistrer</button>
                             <button type="button" class="btn btn-secondary btn-sm" th:onclick="'toggleEditForm(' + ${comment.id} + ')'">Annuler</button>
                         </form>
                     </div>

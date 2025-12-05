@@ -11,7 +11,7 @@
     <th:block th:replace="~{fragments/header :: header}"></th:block>
 
     <div class="container medium">
-        <h1>🔗 Partager la photo</h1>
+        <h1>Partager la photo</h1>
 
         <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
         <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
@@ -86,7 +86,7 @@
             </table>
         </div>
 
-        <a th:href="@{/photos/{id}(id=${photo.id})}" class="btn btn-secondary">⬅️ Retour à la photo</a>
+        <a th:href="@{/photos/{id}(id=${photo.id})}" class="btn btn-secondary">Retour à la photo</a>
     </div>
 </body>
 </html>

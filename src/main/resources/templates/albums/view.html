@@ -16,7 +16,7 @@
 
         <!-- En-tête de l'album -->
         <div class="album-header">
-            <h1 th:text="'📁 ' + ${album.name}"></h1>
+            <h1 th:text="${album.name}"></h1>
             <div class="meta">
                 <span th:text="${album.photoCount} + ' photo(s)'"></span>
                 <span th:text="' • Créé le ' + ${#dates.format(album.createdAt, 'dd/MM/yyyy')}"></span>
@@ -24,18 +24,18 @@
             <p class="description" th:if="${album.description != null}" th:text="${album.description}"></p>
 
             <div class="album-actions" th:if="${isOwner}">
-                <a th:href="@{/albums/{id}/edit(id=${album.id})}" class="btn btn-primary">✏️ Modifier</a>
+                <a th:href="@{/albums/{id}/edit(id=${album.id})}" class="btn btn-primary">Modifier</a>
                 <form th:action="@{/albums/{id}/delete(id=${album.id})}" method="post" style="display: inline;"
                       onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet album ? Les photos ne seront pas supprimées.');">
-                    <button type="submit" class="btn btn-danger">🗑️ Supprimer l'album</button>
+                    <button type="submit" class="btn btn-danger">Supprimer l'album</button>
                 </form>
-                <a th:href="@{/albums}" class="btn btn-secondary">⬅️ Retour</a>
+                <a th:href="@{/albums}" class="btn btn-secondary">Retour</a>
             </div>
         </div>
 
         <!-- Section : Ajouter une photo -->
         <div class="section" th:if="${isOwner and !#lists.isEmpty(availablePhotos)}">
-            <h2>➕ Ajouter une photo à l'album</h2>
+            <h2>Ajouter une photo à l'album</h2>
             <form th:action="@{/albums/{id}/photos/add(id=${album.id})}" method="post" class="add-photo-form">
                 <select name="photoId" required>
                     <option value="">Sélectionner une photo...</option>
@@ -47,7 +47,7 @@
 
         <!-- Section : Photos de l'album -->
         <div class="section">
-            <h2>🖼️ Photos de l'album</h2>
+            <h2>Photos de l'album</h2>
 
             <div th:if="${#lists.isEmpty(photos)}" class="empty-state">
                 <p>Cet album ne contient pas encore de photos.</p>
@@ -65,7 +65,7 @@
                     <form th:if="${isOwner}" th:action="@{/albums/{albumId}/photos/{photoId}/remove(albumId=${album.id}, photoId=${photo.id})}"
                           method="post" style="display: inline;"
                           onsubmit="return confirm('Retirer cette photo de l\'album ?');">
-                        <button type="submit" class="remove-btn" title="Retirer de l'album">✕</button>
+                        <button type="submit" class="remove-btn" title="Retirer de l'album">X</button>
                     </form>
                 </div>
             </div>

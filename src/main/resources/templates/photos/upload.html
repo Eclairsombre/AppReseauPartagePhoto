@@ -11,23 +11,25 @@
     <th:block th:replace="~{fragments/header :: header}"></th:block>
 
     <div class="container">
-        <h1>📤 Uploader une photo</h1>
+        <h1>Uploader une photo</h1>
 
         <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+        <div id="clientError" class="alert alert-error" style="display: none;"></div>
 
         <div class="card">
-            <form th:action="@{/photos/upload}" method="post" enctype="multipart/form-data">
+            <form th:action="@{/photos/upload}" method="post" enctype="multipart/form-data" onsubmit="return validateFile()">
                 <div class="form-group">
                     <label>Photo *</label>
                     <div class="file-input" onclick="document.getElementById('file').click()">
                         <input type="file" id="file" name="file" accept="image/jpeg,image/png,image/gif,image/webp,image/bmp" required onchange="previewImage(this)">
                         <div class="label">
-                            <p>📁 Cliquez pour sélectionner une image</p>
+                            <p>Cliquez pour sélectionner une image</p>
                             <p>ou glissez-déposez ici</p>
                         </div>
                         <img class="preview" id="preview" alt="Aperçu">
                     </div>
                     <p class="help-text" th:text="'Formats acceptés: JPEG, PNG, GIF, WebP, BMP. Taille max: ' + ${maxFileSize} + ' MB'"></p>
+                    <p id="fileSize" class="help-text" style="color: #27ae60;"></p>
                 </div>
 
                 <div class="form-group">
@@ -52,44 +54,100 @@
                 </div>
 
                 <div class="buttons">
-                    <button type="submit" class="btn btn-primary">📤 Uploader</button>
+                    <button type="submit" class="btn btn-primary">Uploader</button>
                     <a th:href="@{/photos}" class="btn btn-secondary">Annuler</a>
                 </div>
             </form>
         </div>
     </div>
 
-    <script>
+    <script th:inline="javascript">
+        const MAX_FILE_SIZE = /*[[${maxFileSize}]]*/ 10 * 1024 * 1024; // en bytes
+        const MAX_FILE_SIZE_MB = /*[[${maxFileSize}]]*/ 10;
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' octets';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('clientError');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function hideError() {
+            const errorDiv = document.getElementById('clientError');
+            errorDiv.style.display = 'none';
+        }
+
+        function validateFile() {
+            const fileInput = document.getElementById('file');
+            if (fileInput.files && fileInput.files[0]) {
+                const file = fileInput.files[0];
+                const maxBytes = MAX_FILE_SIZE_MB * 1024 * 1024;
+
+                if (file.size > maxBytes) {
+                    showError('Le fichier est trop volumineux (' + formatFileSize(file.size) + '). La taille maximale autorisee est de ' + MAX_FILE_SIZE_MB + ' MB.');
+                    return false;
+                }
+            }
+            hideError();
+            return true;
+        }
+
         function previewImage(input) {
             const preview = document.getElementById('preview');
             const label = input.parentElement.querySelector('.label');
+            const fileSizeInfo = document.getElementById('fileSize');
 
             if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const maxBytes = MAX_FILE_SIZE_MB * 1024 * 1024;
+
+                // Afficher la taille du fichier
+                fileSizeInfo.textContent = 'Taille du fichier: ' + formatFileSize(file.size);
+
+                // Verifier la taille
+                if (file.size > maxBytes) {
+                    fileSizeInfo.style.color = '#e74c3c';
+                    showError('Le fichier est trop volumineux (' + formatFileSize(file.size) + '). La taille maximale autorisee est de ' + MAX_FILE_SIZE_MB + ' MB.');
+                    // Reset le fichier
+                    preview.style.display = 'none';
+                    label.style.display = 'block';
+                    return;
+                } else {
+                    fileSizeInfo.style.color = '#27ae60';
+                    hideError();
+                }
+
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     preview.src = e.target.result;
                     preview.style.display = 'block';
                     label.style.display = 'none';
                 }
-                reader.readAsDataURL(input.files[0]);
+                reader.readAsDataURL(file);
             }
         }
 
         // Drag and drop support
-        const fileInput = document.querySelector('.file-input');
-        fileInput.addEventListener('dragover', (e) => {
+        const fileInputArea = document.querySelector('.file-input');
+        fileInputArea.addEventListener('dragover', (e) => {
             e.preventDefault();
-            fileInput.style.borderColor = '#3498db';
-            fileInput.style.background = '#f0f8ff';
+            fileInputArea.style.borderColor = '#3498db';
+            fileInputArea.style.background = '#f0f8ff';
         });
-        fileInput.addEventListener('dragleave', () => {
-            fileInput.style.borderColor = '#ddd';
-            fileInput.style.background = 'transparent';
+        fileInputArea.addEventListener('dragleave', () => {
+            fileInputArea.style.borderColor = '#ddd';
+            fileInputArea.style.background = 'transparent';
         });
-        fileInput.addEventListener('drop', (e) => {
+        fileInputArea.addEventListener('drop', (e) => {
             e.preventDefault();
-            fileInput.style.borderColor = '#ddd';
-            fileInput.style.background = 'transparent';
+            fileInputArea.style.borderColor = '#ddd';
+            fileInputArea.style.background = 'transparent';
             const file = document.getElementById('file');
             file.files = e.dataTransfer.files;
             previewImage(file);
