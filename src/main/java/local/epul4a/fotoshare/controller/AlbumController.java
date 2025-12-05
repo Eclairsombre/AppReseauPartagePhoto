@@ -1,5 +1,4 @@
 package local.epul4a.fotoshare.controller;
-
 import local.epul4a.fotoshare.dto.AlbumResponseDto;
 import local.epul4a.fotoshare.dto.PhotoResponseDto;
 import local.epul4a.fotoshare.model.Album;
@@ -16,27 +15,21 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 /**
  * Contrôleur pour la gestion des albums.
  */
 @Controller
 @RequestMapping("/albums")
 public class AlbumController {
-
     @Autowired
     private AlbumService albumService;
-
     @Autowired
     private PhotoService photoService;
-
     @Autowired
     private UserRepository userRepository;
-
     /**
      * Affiche la liste des albums de l'utilisateur.
      */
@@ -46,10 +39,8 @@ public class AlbumController {
         if (userId == null) {
             return "redirect:/login";
         }
-
         List<Album> albums = albumService.getAlbumsByOwner(userId);
         String username = getCurrentUsername();
-
         List<AlbumResponseDto> albumDtos = albums.stream()
                 .map(album -> {
                     Long photoCount = albumService.countPhotosInAlbum(album.getId());
@@ -58,11 +49,9 @@ public class AlbumController {
                     return AlbumResponseDto.fromEntity(album, username, photoCount, coverUrl);
                 })
                 .collect(Collectors.toList());
-
         model.addAttribute("albums", albumDtos);
         return "albums/list";
     }
-
     /**
      * Affiche le formulaire de création d'album.
      */
@@ -74,7 +63,6 @@ public class AlbumController {
         }
         return "albums/create";
     }
-
     /**
      * Traite la création d'un album.
      */
@@ -86,7 +74,6 @@ public class AlbumController {
         if (userId == null) {
             return "redirect:/login";
         }
-
         try {
             Album album = albumService.createAlbum(name, description, userId);
             redirectAttributes.addFlashAttribute("successMessage", "Album créé avec succès !");
@@ -96,7 +83,6 @@ public class AlbumController {
             return "redirect:/albums/create";
         }
     }
-
     /**
      * Affiche un album et ses photos.
      */
@@ -106,18 +92,15 @@ public class AlbumController {
         if (userId == null) {
             return "redirect:/login";
         }
-
         Optional<Album> albumOpt = albumService.getAlbumIfAccessible(id, userId);
         if (albumOpt.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Album introuvable ou accès non autorisé");
             return "redirect:/albums";
         }
-
         Album album = albumOpt.get();
         String ownerUsername = userRepository.findById(album.getOwner_id())
                 .map(User::getUsername)
                 .orElse("Inconnu");
-
         List<Photo> photos = albumService.getPhotosInAlbum(id, userId);
         List<PhotoResponseDto> photoDtos = photos.stream()
                 .map(photo -> {
@@ -125,26 +108,20 @@ public class AlbumController {
                     return PhotoResponseDto.fromEntity(photo, ownerUsername, permission);
                 })
                 .collect(Collectors.toList());
-
         Long photoCount = albumService.countPhotosInAlbum(id);
         String coverUrl = photos.isEmpty() ? null : "/photos/" + photos.get(0).getId() + "/file";
         AlbumResponseDto albumDto = AlbumResponseDto.fromEntity(album, ownerUsername, photoCount, coverUrl);
-
-        // Récupérer les photos de l'utilisateur pour ajouter à l'album
         List<Photo> userPhotos = photoService.getPhotosByOwner(userId);
         List<PhotoResponseDto> userPhotoDtos = userPhotos.stream()
                 .filter(p -> !photos.stream().anyMatch(ap -> ap.getId().equals(p.getId())))
                 .map(photo -> PhotoResponseDto.fromEntity(photo, ownerUsername, PERMISSION.ADMIN))
                 .collect(Collectors.toList());
-
         model.addAttribute("album", albumDto);
         model.addAttribute("photos", photoDtos);
         model.addAttribute("availablePhotos", userPhotoDtos);
         model.addAttribute("isOwner", album.getOwner_id().equals(userId));
-
         return "albums/view";
     }
-
     /**
      * Affiche le formulaire de modification d'album.
      */
@@ -154,23 +131,19 @@ public class AlbumController {
         if (userId == null) {
             return "redirect:/login";
         }
-
         Optional<Album> albumOpt = albumService.getAlbumIfAccessible(id, userId);
         if (albumOpt.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Album introuvable");
             return "redirect:/albums";
         }
-
         Album album = albumOpt.get();
         if (!album.getOwner_id().equals(userId)) {
             redirectAttributes.addFlashAttribute("errorMessage", "Vous n'êtes pas le propriétaire de cet album");
             return "redirect:/albums";
         }
-
         model.addAttribute("album", album);
         return "albums/edit";
     }
-
     /**
      * Traite la modification d'un album.
      */
@@ -183,17 +156,14 @@ public class AlbumController {
         if (userId == null) {
             return "redirect:/login";
         }
-
         try {
             albumService.updateAlbum(id, name, description, userId);
             redirectAttributes.addFlashAttribute("successMessage", "Album mis à jour avec succès !");
         } catch (SecurityException | IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
-
         return "redirect:/albums/" + id;
     }
-
     /**
      * Supprime un album.
      */
@@ -203,7 +173,6 @@ public class AlbumController {
         if (userId == null) {
             return "redirect:/login";
         }
-
         try {
             albumService.deleteAlbum(id, userId);
             redirectAttributes.addFlashAttribute("successMessage", "Album supprimé avec succès");
@@ -211,10 +180,8 @@ public class AlbumController {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/albums/" + id;
         }
-
         return "redirect:/albums";
     }
-
     /**
      * Ajoute une photo à un album.
      */
@@ -226,17 +193,14 @@ public class AlbumController {
         if (userId == null) {
             return "redirect:/login";
         }
-
         try {
             albumService.addPhotoToAlbum(albumId, photoId, userId);
             redirectAttributes.addFlashAttribute("successMessage", "Photo ajoutée à l'album");
         } catch (SecurityException | IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
-
         return "redirect:/albums/" + albumId;
     }
-
     /**
      * Retire une photo d'un album.
      */
@@ -248,17 +212,14 @@ public class AlbumController {
         if (userId == null) {
             return "redirect:/login";
         }
-
         try {
             albumService.removePhotoFromAlbum(albumId, photoId, userId);
             redirectAttributes.addFlashAttribute("successMessage", "Photo retirée de l'album");
         } catch (SecurityException | IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
-
         return "redirect:/albums/" + albumId;
     }
-
     /**
      * Récupère l'ID de l'utilisateur actuellement connecté.
      */
@@ -267,13 +228,11 @@ public class AlbumController {
         if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
             return null;
         }
-
         String username = auth.getName();
         return userRepository.findByUsername(username)
                 .map(User::getId)
                 .orElse(null);
     }
-
     /**
      * Récupère le nom d'utilisateur actuellement connecté.
      */
@@ -285,4 +244,3 @@ public class AlbumController {
         return auth.getName();
     }
 }
-

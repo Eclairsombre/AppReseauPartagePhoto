@@ -1,13 +1,10 @@
 package local.epul4a.fotoshare.dto;
-
 import local.epul4a.fotoshare.model.Commentary;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.util.Date;
-
 /**
  * DTO pour la réponse d'un commentaire.
  */
@@ -16,7 +13,6 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommentaryResponseDto {
-
     private Long id;
     private String text;
     private Long photoId;
@@ -25,7 +21,6 @@ public class CommentaryResponseDto {
     private Date createdAt;
     private boolean canDelete;
     private boolean canEdit;
-
     /**
      * Convertit une entité Commentary en DTO.
      */
@@ -43,4 +38,3 @@ public class CommentaryResponseDto {
                 .build();
     }
 }
-

@@ -1,5 +1,4 @@
 package local.epul4a.fotoshare.controller;
-
 import jakarta.validation.Valid;
 import local.epul4a.fotoshare.dto.UserRegistrationDto;
 import local.epul4a.fotoshare.model.User;
@@ -10,27 +9,19 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 @Controller
 public class UserController {
-
     @Autowired
     private UserService userService;
-
-    // Page d'accueil
     @GetMapping("/")
     public String home() {
         return "index";
     }
-
-    // Afficher le formulaire d'inscription
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
         model.addAttribute("user", new UserRegistrationDto());
         return "register";
     }
-
-    // Traiter l'inscription
     @PostMapping("/register")
     public String registerUser(@Valid @ModelAttribute("user") UserRegistrationDto registrationDto,
                               BindingResult result,
@@ -38,7 +29,6 @@ public class UserController {
         if (result.hasErrors()) {
             return "register";
         }
-
         try {
             userService.registerUser(registrationDto);
             redirectAttributes.addFlashAttribute("successMessage", "Inscription réussie! Vous pouvez maintenant vous connecter.");
@@ -48,8 +38,6 @@ public class UserController {
             return "register";
         }
     }
-
-    // Afficher le formulaire de connexion
     @GetMapping("/login")
     public String showLoginForm(@RequestParam(value = "error", required = false) String error,
                                @RequestParam(value = "logout", required = false) String logout,

@@ -28,7 +28,7 @@
         <div class="photos-grid" th:unless="${#lists.isEmpty(photos)}">
             <div th:each="photo : ${photos}" class="photo-card">
                 <a th:href="@{/photos/{id}(id=${photo.id})}">
-                    <img th:src="@{/photos/{id}/file(id=${photo.id})}" th:alt="${photo.title}" loading="lazy">
+                    <img th:src="@{/photos/{id}/thumbnail(id=${photo.id})}" th:alt="${photo.title}" loading="lazy">
                 </a>
                 <div class="info">
                     <div class="title">
@@ -45,7 +45,32 @@
                 </div>
             </div>
         </div>
+
+        <!-- Pagination -->
+        <nav th:if="${totalPages > 1}" class="pagination-container" aria-label="Pagination">
+            <ul class="pagination">
+                <li class="page-item" th:classappend="${!hasPrevious} ? 'disabled'">
+                    <a class="page-link" th:href="@{${isOwnerView != null and isOwnerView} ? '/photos/my' : '/photos'(page=${currentPage - 1})}" th:if="${hasPrevious}">Precedent</a>
+                    <span class="page-link" th:unless="${hasPrevious}">Precedent</span>
+                </li>
+
+                <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                    class="page-item"
+                    th:classappend="${i == currentPage} ? 'active'"
+                    th:if="${i == 0 or i == totalPages - 1 or (i >= currentPage - 2 and i <= currentPage + 2)}">
+                    <a class="page-link" th:href="@{${isOwnerView != null and isOwnerView} ? '/photos/my' : '/photos'(page=${i})}" th:text="${i + 1}"></a>
+                </li>
+
+                <li class="page-item" th:classappend="${!hasNext} ? 'disabled'">
+                    <a class="page-link" th:href="@{${isOwnerView != null and isOwnerView} ? '/photos/my' : '/photos'(page=${currentPage + 1})}" th:if="${hasNext}">Suivant</a>
+                    <span class="page-link" th:unless="${hasNext}">Suivant</span>
+                </li>
+            </ul>
+            <p class="pagination-info" th:text="'Page ' + (${currentPage} + 1) + ' sur ' + ${totalPages} + ' (' + ${totalItems} + ' photos)'"></p>
+        </nav>
     </div>
+
+    <th:block th:replace="~{fragments/header :: bootstrap-scripts}"></th:block>
 </body>
 </html>
 

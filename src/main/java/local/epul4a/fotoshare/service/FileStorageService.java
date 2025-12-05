@@ -1,11 +1,9 @@
 package local.epul4a.fotoshare.service;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,19 +13,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
-
 /**
  * Service de stockage des fichiers photos.
  * Gère le stockage physique des fichiers hors de la racine web publique.
  */
 @Service
 public class FileStorageService {
-
     @Value("${fotoshare.storage.location:./uploads}")
     private String storageLocation;
-
     private Path rootLocation;
-
     @PostConstruct
     public void init() {
         this.rootLocation = Paths.get(storageLocation).toAbsolutePath().normalize();
@@ -37,7 +31,6 @@ public class FileStorageService {
             throw new RuntimeException("Impossible de créer le répertoire de stockage", e);
         }
     }
-
     /**
      * Stocke un fichier avec un nom UUID pour éviter les collisions et injections.
      *
@@ -50,29 +43,21 @@ public class FileStorageService {
         if (file.isEmpty()) {
             throw new IllegalArgumentException("Impossible de stocker un fichier vide");
         }
-
-        // Génération d'un nom unique avec UUID
         String storageFilename = UUID.randomUUID().toString() + "." + extension;
-
         try {
             Path destinationFile = this.rootLocation.resolve(Paths.get(storageFilename))
                     .normalize().toAbsolutePath();
-
-            // Vérification de sécurité : le fichier doit être dans le répertoire de stockage
             if (!destinationFile.getParent().equals(this.rootLocation.toAbsolutePath())) {
                 throw new SecurityException("Tentative de stockage en dehors du répertoire autorisé");
             }
-
             try (InputStream inputStream = file.getInputStream()) {
                 Files.copy(inputStream, destinationFile, StandardCopyOption.REPLACE_EXISTING);
             }
-
             return storageFilename;
         } catch (IOException e) {
             throw new RuntimeException("Échec du stockage du fichier", e);
         }
     }
-
     /**
      * Charge un fichier comme Resource.
      *
@@ -82,14 +67,10 @@ public class FileStorageService {
     public Resource loadAsResource(String filename) {
         try {
             Path file = rootLocation.resolve(filename).normalize();
-
-            // Vérification de sécurité
             if (!file.toAbsolutePath().startsWith(rootLocation.toAbsolutePath())) {
                 throw new SecurityException("Tentative d'accès en dehors du répertoire autorisé");
             }
-
             Resource resource = new UrlResource(file.toUri());
-
             if (resource.exists() && resource.isReadable()) {
                 return resource;
             } else {
@@ -99,7 +80,6 @@ public class FileStorageService {
             throw new RuntimeException("Erreur lors du chargement du fichier: " + filename, e);
         }
     }
-
     /**
      * Supprime un fichier stocké.
      *
@@ -109,18 +89,14 @@ public class FileStorageService {
     public boolean delete(String filename) {
         try {
             Path file = rootLocation.resolve(filename).normalize();
-
-            // Vérification de sécurité
             if (!file.toAbsolutePath().startsWith(rootLocation.toAbsolutePath())) {
                 throw new SecurityException("Tentative de suppression en dehors du répertoire autorisé");
             }
-
             return Files.deleteIfExists(file);
         } catch (IOException e) {
             throw new RuntimeException("Échec de la suppression du fichier: " + filename, e);
         }
     }
-
     /**
      * Vérifie si un fichier existe.
      *
@@ -129,15 +105,11 @@ public class FileStorageService {
      */
     public boolean exists(String filename) {
         Path file = rootLocation.resolve(filename).normalize();
-
-        // Vérification de sécurité
         if (!file.toAbsolutePath().startsWith(rootLocation.toAbsolutePath())) {
             return false;
         }
-
         return Files.exists(file);
     }
-
     /**
      * Retourne le chemin absolu du répertoire de stockage.
      */
@@ -145,4 +117,3 @@ public class FileStorageService {
         return rootLocation;
     }
 }
-

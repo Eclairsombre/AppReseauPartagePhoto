@@ -1,13 +1,10 @@
 package local.epul4a.fotoshare.dto;
-
 import local.epul4a.fotoshare.model.Album;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.util.Date;
-
 /**
  * DTO pour la réponse d'un album.
  */
@@ -16,7 +13,6 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AlbumResponseDto {
-
     private Long id;
     private String name;
     private String description;
@@ -25,7 +21,6 @@ public class AlbumResponseDto {
     private Date createdAt;
     private Long photoCount;
     private String coverPhotoUrl;
-
     /**
      * Convertit une entité Album en DTO.
      */
@@ -42,4 +37,3 @@ public class AlbumResponseDto {
                 .build();
     }
 }
-

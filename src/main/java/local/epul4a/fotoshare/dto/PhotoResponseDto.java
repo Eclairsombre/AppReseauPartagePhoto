@@ -1,5 +1,4 @@
 package local.epul4a.fotoshare.dto;
-
 import local.epul4a.fotoshare.model.PERMISSION;
 import local.epul4a.fotoshare.model.Photo;
 import local.epul4a.fotoshare.model.VISIBILITY;
@@ -7,9 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.util.Date;
-
 /**
  * DTO pour la réponse d'une photo.
  */
@@ -18,7 +15,6 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PhotoResponseDto {
-
     private Long id;
     private String title;
     private String description;
@@ -30,7 +26,6 @@ public class PhotoResponseDto {
     private String ownerUsername;
     private Date createdAt;
     private PERMISSION userPermission;
-
     /**
      * Convertit une entité Photo en DTO.
      */
@@ -50,4 +45,3 @@ public class PhotoResponseDto {
                 .build();
     }
 }
-

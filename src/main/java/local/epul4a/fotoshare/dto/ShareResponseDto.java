@@ -1,14 +1,11 @@
 package local.epul4a.fotoshare.dto;
-
 import local.epul4a.fotoshare.model.PERMISSION;
 import local.epul4a.fotoshare.model.Share;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.util.Date;
-
 /**
  * DTO pour la réponse d'un partage.
  */
@@ -17,14 +14,12 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ShareResponseDto {
-
     private Long id;
     private Long photoId;
     private Long userId;
     private String username;
     private PERMISSION permission;
     private Date createdAt;
-
     /**
      * Convertit une entité Share en DTO.
      */
@@ -39,4 +34,3 @@ public class ShareResponseDto {
                 .build();
     }
 }
-
